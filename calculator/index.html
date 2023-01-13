@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="main.css">
+  </head>
+
+  <body>
+    <form name="calculator">
+      <table class="calculator">
+        <!-- ディスプレイ部分 -->
+        <tr>
+          <td colspan="4"><input type="text" class="display" name="display" value="" disabled></td>
+        </tr>
+        <tr>
+          <td><input class="button" type="button" value="7" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="8" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="9" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="+" class="operator" onclick="inputOperator(this)"></td>
+        </tr>
+        <tr>
+          <td><input class="button" type="button" value="4" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="5" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="6" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="-" class="operator" onclick="inputOperator(this)"></td>
+        </tr>
+        <tr>
+          <td><input class="button" type="button" value="1" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="2" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="3" onclick="inputNaturalNumber(this)"></td>
+          <td><input class="button" type="button" value="*" class="operator" name="multi_btn" onclick="inputOperator(this)"></td>
+        </tr>
+        <tr>
+          <td><input class="button" type="button" value="0" onclick="inputZero(this)"></td>
+          <td><input class="button" type="button" value="00" onclick="inputDoubleZero(this)"></td>
+          <td><input class="button" type="button" value="." class="operator" onclick="inputDot(this)"></td>
+          <td><input class="button" type="button" value="/" class="operator" name="div_btn" onclick="inputOperator(this)"></td>
+        </tr>
+        <tr>
+          <td colspan="2"><input class="button" type="button" value="AC" onclick="clearCalculator(this)"></td>
+          <td colspan="2"><input class="button" type="button" value="=" class="equal" onclick="getAnswer(this)"></td>
+        </tr>
+      </table>
+    </form>
+    <script src="main.js"></script>
+  </body>
+</html>
