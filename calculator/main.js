@@ -22,12 +22,12 @@ const INITIAL_VALUE = "0";
 // 補足：本電卓は、Javascriptの仕様により発生する丸め誤差には対応していない
 
 function inputNaturalNumber (btn) {
-    //表示の値が「0」あるいは「エラー」（初期状態）の場合、値を入力値に置き換える
-    if (DISPLAY.value === INITIAL_VALUE || DISPLAY.value === ERROR_VALUE) {
+    //表示の値が「0」（初期状態）あるいは「エラー」の場合、値を入力値に置き換える
+    if (isInitialOrErrorValue(DISPLAY.value)) {
         DISPLAY.value = btn.value;
     // 表示の値が「任意の演算子」と「0」の組み合わせによる後方一致の場合、値の末尾「0」を入力値に置き換える
     // 例：「1+0」の時に「1」を入力した場合、「1+1」となる
-    } else if (PATTERN_OP_AND_ZERO.test(DISPLAY.value.slice(-2)))  {
+    } else if (endsWithOperatorAndZero(DISPLAY.value))  {
         DISPLAY.value = DISPLAY.value.slice(0, -1);
         DISPLAY.value += btn.value;
     // 通常動作
@@ -36,29 +36,44 @@ function inputNaturalNumber (btn) {
     }
 }
 function inputZero (btn) {
-    // 表示の値が「0」あるいは「エラー」（初期状態）の場合、入力「0」を無効にする
-    if (DISPLAY.value === INITIAL_VALUE || DISPLAY.value === ERROR_VALUE) {
+    // 表示の値が「0」（初期状態）の場合、入力「0」を無効にする
+    if (isInitialValue(DISPLAY.value)) {
         return 1;
+    // 表示の値が「エラー」の場合、値を「0」にする
+    } else if (isErrorValue(DISPLAY.value)) {
+        DISPLAY.value = "0";
     // 表示の値が「任意の演算子」と「0」の組み合わせによる後方一致の場合、入力「0」を無効にする
     // 例：「1+0」の場合、入力「0」を無効する
-    } else if (PATTERN_OP_AND_ZERO.test(DISPLAY.value.slice(-2))) {
+    } else if (endsWithOperatorAndZero(DISPLAY.value)) {
         return 1;
     }
     // 通常動作
     DISPLAY.value += btn.value;
 }
-function clearCalculator () {
-    initialize();
+function inputDoubleZero (btn) {
+    // 表示の値が「0」（初期状態）あるいは「エラー」の場合、入力「0」を無効にする
+    if (isInitialOrErrorValue(DISPLAY.value)) {
+        return 1;
+    // 表示の値が「任意の演算子」による後方一致の場合、入力「00」を無効にする
+    } else if (endsWithOperator(DISPLAY.value)) {
+        return 1;
+    // 表示の値が「任意の演算子」と「0」の組み合わせによる後方一致の場合、入力「00」を無効にする
+    // 例：「1+0」の場合、入力「00」を無効する
+    } else if (endsWithOperatorAndZero(DISPLAY.value)) {
+        return 1;
+    }
+    // 通常動作
+    DISPLAY.value += btn.value;
 }
 function getAnswer (btn) {
     // 表示の値が「エラー」の場合、入力「=」を無効にする
-    if (DISPLAY.value === ERROR_VALUE) {
+    if (isErrorValue(DISPLAY.value)) {
         return 1;
     // 表示の値が「任意の演算子」による後方一致の場合、入力「=」を無効にする
-    } else if (OPERATOR.includes(DISPLAY.value.slice(-1))) {
+    } else if (endsWithOperator(DISPLAY.value)) {
         return 1;
     // 表示の値が「.」による後方一致の場合、末尾「.」を削除してから処理をすすめる
-    } else if (DISPLAY.value.endsWith(".")) {
+    } else if (endsWithDot(DISPLAY.value)) {
         DISPLAY.value = DISPLAY.value.slice(0, -1);
     }
     // 計算を行う
@@ -70,14 +85,14 @@ function getAnswer (btn) {
 }
 function inputDot (btn) {
     // 表示の値を参照するに、自身が繰り返されている場合、入力「.」を無効にする
-    if (DISPLAY.value.endsWith(btn.value)) {
+    if (isRepeated(DISPLAY.value, btn.value)) {
         return 1;
-    // 表示が「0」あるいは「エラー」（初期状態）の場合、値を「0.」に置き換える
-    } else if (DISPLAY.value === INITIAL_VALUE || DISPLAY.value === ERROR_VALUE) {
+    // 表示が「0」（初期状態）あるいは「エラー」の場合、値を「0.」に置き換える
+    } else if (isInitialOrErrorValue(DISPLAY.value)) {
         DISPLAY.value = "0.";
     // 表示が「任意の演算子」による後方一致の場合、値の末尾に「.0」を入力する
     // 例：「1+」の時に「.」を入力した場合、「1+0.」となる
-    } else if (OPERATOR.includes(DISPLAY.value.slice(-1))) {
+    } else if (endsWithOperator(DISPLAY.value)) {
         DISPLAY.value += 0;
         DISPLAY.value += btn.value;
     // 表示の値を先頭から参照する際に、点が打たれている後に数字が入力されている時、
@@ -97,11 +112,13 @@ function inputDot (btn) {
                 return 1;
             }
         } 
-    // 表示の値を先頭から参照する際に、最初に演算子が使用されるまでに点は打たれていないが、直近で演算子が使用されて以降、点を打った後に数字が入力されている場合、入力「.」を無効にする
+    // 表示の値を先頭から参照する際に、最初に演算子が使用されるまでに点は打たれていないが、
+    // 直近で演算子が使用されて以降、点を打った後に数字が入力されている場合、入力「.」を無効にする
     // 例：「1+0.1」の場合、入力「.」を無効にする
     } else if (PATTERN_OP_NUM_DOT_NUM_BW.test(DISPLAY.value)) {
         return 1;
-    // 表示の値を先頭から参照する際に、最初に演算子が使用されるまでに点は打たれていないが、直近で演算子が使用されて以降、まだ数字しか入力されていない場合、通常動作とする
+    // 表示の値を先頭から参照する際に、最初に演算子が使用されるまでに点は打たれていないが、
+    // 直近で演算子が使用されて以降、まだ数字しか入力されていない場合、通常動作とする
     // 例：「1+0」の場合、「1+0.」となる
     } else if (PATTERN_OP_NUM_BW.test(DISPLAY.value)) {
             DISPLAY.value += btn.value;
@@ -112,16 +129,16 @@ function inputDot (btn) {
 }
 function inputOperator (btn) {
     // 自身が繰り返されている場合、入力「任意の演算子」を無効にする
-    if (DISPLAY.value.endsWith(btn.value)) {
+    if (isRepeated(DISPLAY.value, btn.value)) {
         return 1; 
     }
     // 表示の値が「.」による後方一致の場合、入力「任意の演算子」を無効にする
-    if (DISPLAY.value.endsWith(".")) {
+    if (endsWithDot(DISPLAY.value)) {
         return 1; 
     }
     // 表示の値が「任意の演算子を除く演算子」による後方一致の場合、値の末尾「任意の演算子を除く演算子」を入力値に置き換える
     // 例：「1+」の時に「-」を入力した場合、「1-」となる
-    if (OPERATOR.includes(DISPLAY.value.slice(-1))) {
+    if (endsWithOperator(DISPLAY.value)) {
         DISPLAY.value = DISPLAY.value.slice(0, -1);
         DISPLAY.value += btn.value;
     // 通常動作
@@ -129,7 +146,31 @@ function inputOperator (btn) {
         DISPLAY.value += btn.value;
     }
 }
-
+function clearCalculator () {
+    initialize();
+}
+// 判定処理
+function isInitialOrErrorValue (_value) {
+    return DISPLAY.value === INITIAL_VALUE || DISPLAY.value === ERROR_VALUE;
+}
+function isInitialValue (_value) {
+    return DISPLAY.value === INITIAL_VALUE;
+}
+function isErrorValue (_value) {
+    return DISPLAY.value === ERROR_VALUE;
+}
+function endsWithOperatorAndZero (_value) {
+    return PATTERN_OP_AND_ZERO.test(_value.slice(-2));
+}
+function endsWithOperator (_value) {
+    return OPERATOR.includes(DISPLAY.value.slice(-1));
+}
+function endsWithDot (_value) {
+    return DISPLAY.value.endsWith(".");
+}
+function isRepeated (_display, _btn) {
+    return _display.endsWith(_btn);
+}
 // 初回時の電卓初期化
 function initialize () {
     DISPLAY.value = INITIAL_VALUE;
