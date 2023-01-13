@@ -1,0 +1,27 @@
+/* 全体 */
+.main {
+    width: 260px;
+}
+/* ボタン */
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+.button {
+    padding: 12px 10px;
+}
+/* タイマー */
+.timer {
+    align-items: baseline;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    max-width: 200px;
+    padding: 50px 0;
+}
+.timer-number {
+    font-size: 32px;
+}
+.timer-colon {
+    font-size: 18px;
+}
