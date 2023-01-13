@@ -1,0 +1,24 @@
+.main {
+    width: 260px;
+}
+.timer {
+    padding: 50px 0;
+    display: flex;
+    justify-content: space-between;
+    max-width: 200px;
+    margin: 0 auto;
+    align-items: baseline;
+}
+.timer > span {
+    font-size: 32px;
+}
+.timer > .timer-colon {
+    font-size: 18px;
+}
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+button {
+    padding: 12px 10px;
+}

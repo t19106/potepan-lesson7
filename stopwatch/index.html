@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="main.css">
+        <title>ストップウォッチ</title>
+    </head>
+
+    <body>
+    <h3>ストップウォッチ</h3>
+
+    <!-- ここに記述していきましょう！ -->
+    <div class="main">
+        <div class="timer">
+            <span id="hour">0</span>
+            <span class="timer-colon">:</span>
+            <span id="minute">0</span>
+            <span class="timer-colon">:</span>
+            <span id="second">0</span>
+            <span class="timer-colon">:</span>
+            <span id="millisecond">0</span>
+        </div>
+        <div class="buttons">
+            <button type="button" id="start" class="button">スタート</button>
+            <button type="button" id="pause" class="button" disabled>ストップ</button>
+            <button type="button" id="reset" class="button" disabled>リセット</button>
+        </div>
+    </div>
+        <script src="main.js"></script>
+    </body>
+</html>
