@@ -7,7 +7,7 @@
     display: flex;
     justify-content: space-between;
 }
-button {
+.button {
     padding: 12px 10px;
 }
 /* タイマー */
@@ -19,9 +19,9 @@ button {
     max-width: 200px;
     padding: 50px 0;
 }
-.timer > span {
+.timer-number {
     font-size: 32px;
 }
-.timer > .timer-colon {
+.timer-colon {
     font-size: 18px;
 }
