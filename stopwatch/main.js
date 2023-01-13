@@ -1,41 +1,41 @@
 'use strict';
 
 // HTML - ストップウォッチ部分
-const millisecond = document.getElementById('millisecond');
-const second = document.getElementById('second');
-const minute = document.getElementById('minute');
-const hour = document.getElementById('hour');
+const millisecondDisplay = document.getElementById('millisecond');
+const secondDisplay      = document.getElementById('second');
+const minuteDisplay      = document.getElementById('minute');
+const hourDisplay        = document.getElementById('hour');
 // HTML - ボタン群
-const start = document.getElementById('start');
-const pause = document.getElementById('pause');
-const reset = document.getElementById('reset');
+const startButton = document.getElementById('startButton');
+const pauseButton = document.getElementById('pauseButton');
+const resetButton = document.getElementById('resetButton');
 // 関数間で使用する変数
 let STATE = 'startOrReset';
 let TIMER_PROCESS; //タイマーの処理
 let ELAPSED_MS = 0; //経過時間
 
 // ボタンを押した時の処理
-start.addEventListener('click', () => {
+startButton.addEventListener('click', () => {
     if (STATE === 'startOrReset') {
         STATE = 'pause';
-        start.setAttribute("disabled", true);
-        reset.setAttribute("disabled", true);
-        pause.removeAttribute("disabled");
+        startButton.setAttribute("disabled", true);
+        resetButton.setAttribute("disabled", true);
+        pauseButton.removeAttribute("disabled");
         runTimer();
     }
 })
-pause.addEventListener('click', () => {
+pauseButton.addEventListener('click', () => {
     if (STATE === 'pause') {
         STATE = 'startOrReset';
-        start.removeAttribute("disabled");
-        reset.removeAttribute("disabled");
-        pause.setAttribute("disabled", true);
+        startButton.removeAttribute("disabled");
+        resetButton.removeAttribute("disabled");
+        pauseButton.setAttribute("disabled", true);
         pauseTimer();
     }
 })
-reset.addEventListener('click', () => {
+resetButton.addEventListener('click', () => {
     if (STATE === 'startOrReset') {
-        reset.setAttribute("disabled", true);
+        resetButton.setAttribute("disabled", true);
         resetTimer();
     }
 })
@@ -92,14 +92,14 @@ function setTimerDisplay () {
     const s  = calculateSecond(ELAPSED_MS);
     const m  = calculateMinute(ELAPSED_MS);
     const h  = calculateHour(ELAPSED_MS);
-    millisecond.innerHTML = ms;
-    second.innerHTML      = s;
-    minute.innerHTML      = m;
-    hour.innerHTML        = h;
+    millisecondDisplay.innerHTML = ms;
+    secondDisplay.innerHTML      = s;
+    minuteDisplay.innerHTML      = m;
+    hourDisplay.innerHTML        = h;
 }
 function resetTimerDisplay () {
-    millisecond.innerHTML = 0;
-    second.innerHTML      = 0;
-    minute.innerHTML      = 0;
-    hour.innerHTML        = 0;
+    millisecondDisplay.innerHTML = 0;
+    secondDisplay.innerHTML      = 0;
+    minuteDisplay.innerHTML      = 0;
+    hourDisplay.innerHTML        = 0;
 }
